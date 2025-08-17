@@ -56,4 +56,14 @@ public class ImageController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("update failed !",HttpStatus.INTERNAL_SERVER_ERROR));
 
     }
+
+    public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId){
+
+        try {
+            imageService.deleteImageById(imageId);
+            return ResponseEntity.ok(new ApiResponse("Image Deleted !", null));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
+        }
+    }
 }
