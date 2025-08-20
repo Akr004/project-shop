@@ -3,18 +3,23 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:file:./data/shopdb   # File-based H2 DB stored in ./data/testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
-  h2:
-    console:
+    url: jdbc:postgresql://localhost:5432/shopingapi
+    username: postgres
+    password: pgadmin
+    driver-class-name: org.postgresql.Driver
+  servlet:
+    multipart:
       enabled: true
-      path: /h2-console
+      max-file-size: 10MB      # maximum size per file
+      max-request-size: 20MB
   jpa:
     hibernate:
-      ddl-auto: update   # Auto update schema on restart
-    show-sql: true       # Show SQL queries in console
+      ddl-auto: update # options: none, validate, update, create, create-drop
+    show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+        jdbc:
+          lob:
+            non_contextual_creation: true

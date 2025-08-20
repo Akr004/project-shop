@@ -1,16 +1,13 @@
-package com.shoping.app.request;
+package com.shoping.app.dto;
 
-import com.shoping.app.dto.ImageDto;
 import com.shoping.app.model.Category;
-
-import lombok.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-
 @Data
-public class AddProductRequest {
+public class ProductDto {
 
     private Long id;
     private String name;
