@@ -1,4 +1,5 @@
-package com.shoping.app.practice;
+package com.serviceregistry.serviceregistery.practice;
+
 
 import java.util.Arrays;
 import java.util.List;

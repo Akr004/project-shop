@@ -1,4 +1,4 @@
-package com.shoping.app.practice;
+package com.serviceregistry.serviceregistery.practice;
 
 public class Item {
 

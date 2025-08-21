@@ -1,11 +1,11 @@
 server:
-  port: 8081  # Change port from default 8080 to 9090
+  port: 8084  # Change port from default 8080 to 9090
 
 spring:
   application:
-    name: Shopping-api
+    name: user-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/shopingapi
+    url: jdbc:postgresql://localhost:5432/userservice
     username: postgres
     password: pgadmin
     driver-class-name: org.postgresql.Driver
