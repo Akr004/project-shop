@@ -40,7 +40,9 @@ public class CartItemServiceImpl implements CartItemService{
         if(cartItem1.getId()==null){
             cartItem1.setCart(cart);
             cartItem1.setProductId(productId);
+
             cartItem1.setQuantity(quantity);
+            cartItem1.setUnitPrice(productDto.getPrice());
             cartItem1.setTotalPrice(productDto.getPrice());
         }
 

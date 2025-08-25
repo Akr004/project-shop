@@ -3,6 +3,7 @@ package com.shopingcart.service;
 import com.shopingcart.exception.ResourceNotFoundException;
 import com.shopingcart.external.ProductService;
 import com.shopingcart.model.Cart;
+import com.shopingcart.model.CartItem;
 import com.shopingcart.payload.ProductDto;
 import com.shopingcart.repository.CartItemRepository;
 import com.shopingcart.repository.CartRepository;
@@ -50,6 +51,7 @@ public class CartServiceImpl implements CartService{
                             item.getProductId(),
                             item.getQuantity(),
                             item.getTotalPrice(),
+
                             productDto   // enrich with product details
                     );
                 })
@@ -69,15 +71,25 @@ public class CartServiceImpl implements CartService{
 
 
     }
+//
+//    @Override
+//    public BigDecimal getTotalPrice(Long id) {
+//
+//        Cart cart=cartRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("not found"));
+//        return cart.getTotalAmount();
+//
+//        return cart.getCartItems().stream().map(CartItem::getTotalPrice)
+//                .reduce(BigDecimal.ZERO,BigDecimal::add);
+//    }
 
     @Override
     public BigDecimal getTotalPrice(Long id) {
+        Cart cart = cartRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("not found"));
 
-        Cart cart=cartRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("not found"));
-        return cart.getTotalAmount();
-
-//        return cart.getCartItems().stream().map(CartItem::getTotalPrice)
-//                .reduce(BigDecimal.ZERO,BigDecimal::add);
+        return cart.getCartItems().stream()
+                .map(CartItem::getTotalPrice) // must handle null inside CartItem
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
     @Override
     public Long initializeNewCart(){
