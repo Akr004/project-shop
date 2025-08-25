@@ -1,7 +1,7 @@
 package com.shopingcart.model;
 
 
-import com.shopingcart.payload.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,10 +23,11 @@ public class CartItem {
     private int quantity;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
-    @Transient
-    private Product product;
+
+    private Long productId;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id")
+    @JsonIgnore
     private Cart cart;
 
     public void setTotalPrice(){

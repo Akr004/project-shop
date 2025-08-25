@@ -4,9 +4,11 @@ import com.shopingcart.exception.ResourceNotFoundException;
 import com.shopingcart.external.ProductService;
 import com.shopingcart.model.Cart;
 import com.shopingcart.model.CartItem;
-import com.shopingcart.payload.Product;
+import com.shopingcart.payload.ProductDto;
 import com.shopingcart.repository.CartItemRepository;
 import com.shopingcart.repository.CartRepository;
+import com.shopingcart.response.ApiResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartItemServiceImpl implements CartItemService{
 
     private final CartItemRepository cartItemRepository;
@@ -27,18 +30,18 @@ public class CartItemServiceImpl implements CartItemService{
     // 3. check if product already in the cart
     // 4. if yes, then increase the quantity
     // 5. if no, initiate a new cart item
-        Cart cart = cartService.getCart(cartId);
-        Product product = productService.getProductById(productId);
+        Cart cart = cartRepository.findById(cartId).orElseThrow(()->new ResourceNotFoundException("not found"));
+        ProductDto productDto = productService.getProductById(productId);
         CartItem cartItem1 = cart.getCartItems()
                 .stream()
-                .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
+                .filter(cartItem -> cartItem.getProductId().equals(productId))
                 .findFirst().orElse(new CartItem());
 
         if(cartItem1.getId()==null){
             cartItem1.setCart(cart);
-            cartItem1.setProduct(product);
+            cartItem1.setProductId(productId);
             cartItem1.setQuantity(quantity);
-            cartItem1.setTotalPrice(product.getPrice());
+            cartItem1.setTotalPrice(productDto.getPrice());
         }
 
         else {
@@ -54,11 +57,11 @@ public class CartItemServiceImpl implements CartItemService{
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
 
-        Cart cart = cartService.getCart(cartId);
-        CartItem itemToRemov = cart.getCartItems().stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
+        Cart cart = cartRepository.findById(cartId).orElseThrow(()->new ResourceNotFoundException("not found"));
+        CartItem itemToRemove = cart.getCartItems().stream()
+                .filter(item -> item.getProductId().equals(productId))
                 .findFirst().orElseThrow(() -> new ResourceNotFoundException("product not found"));
-        cart.removeItem(itemToRemov);
+        cart.removeItem(itemToRemove);
         cartRepository.save(cart);
 
 
@@ -68,13 +71,13 @@ public class CartItemServiceImpl implements CartItemService{
     @Override
     public void updateItemQuantity(Long cartId, Long productId, int quantity) {
 
-        Cart cart = cartService.getCart(cartId);
+        Cart cart = cartRepository.findById(cartId).orElseThrow(()->new ResourceNotFoundException("not found"));
         cart.getCartItems().stream()
-                .filter(item->item.getProduct().getId().equals(productId))
+                .filter(item->item.getProductId().equals(productId))
                 .findFirst()
                 .ifPresent(item -> {
                     item.setQuantity(quantity);
-                    item.setUnitPrice(item.getProduct().getPrice());
+                    item.setUnitPrice(productService.getProductById(productId).getPrice());
                     item.setTotalPrice();
                 } );
         BigDecimal totalAmount = cart.getTotalAmount();
@@ -85,10 +88,10 @@ public class CartItemServiceImpl implements CartItemService{
     }
     @Override
     public CartItem getCartItem(Long cartId, Long productId) {
-        Cart cart = cartService.getCart(cartId);
+        Cart cart = cartRepository.findById(cartId).orElseThrow(()->new ResourceNotFoundException("not found"));
         return  cart.getCartItems()
                 .stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
+                .filter(item -> item.getProductId().equals(productId))
                 .findFirst().orElseThrow(() -> new ResourceNotFoundException("Item not found"));
     }
 }

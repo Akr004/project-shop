@@ -10,5 +10,5 @@ public class Image {
     private Blob image;
     private String downloadUrl;
 
-    private Product product;
+    private ProductDto productDto;
 }

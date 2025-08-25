@@ -18,26 +18,26 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1")
 public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("all")
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProduct(){
         List<Product> allProducts = productService.getAllProducts();
         List<ProductDto> convertedProducts = productService.getConvertedProducts(allProducts);
         return ResponseEntity.ok(new ApiResponse("success",convertedProducts));
 
     }
-    @GetMapping("/product-by-id/{id}")
-    public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id){
+    @GetMapping("/products/{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id){
         try {
             Product productById = productService.getProductById(id);
             ProductDto productDto = productService.convertToDto(productById);
-            return ResponseEntity.ok(new ApiResponse("success",productDto));
+            return ResponseEntity.ok(productDto);
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -63,7 +63,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
         }
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/product/{id}")
     public ResponseEntity<ApiResponse> deleteProduct( @PathVariable Long id){
 
         try {
